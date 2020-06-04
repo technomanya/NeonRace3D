@@ -1,36 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
-using UnityEngine;
-
-public class PlayerImageController : MonoBehaviour
-{
-    private float speed;
-    public PlayerController PlayerController;
-
-    void Start()
-    {
-        PlayerController = GetComponentInParent<PlayerController>();
-        speed = PlayerController.speed;
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        Debug.Log("Collide");
-        if (other.transform.parent.CompareTag("Obstacle") && speed > 5.0f)
-        {
-            //Destroy(other.gameObject);
-            speed -= speed * 0.2f;
-            PlayerController.speed = speed;
-            //gameObject.GetComponent<GridController>().speed -= gameObject.GetComponent<GridController>().speed * 0.2f;
-        }
-        else if (other.transform.parent.CompareTag("Power") && speed < 20.0f)
-        {
-            //Destroy(other.gameObject);
-            speed += speed * 0.5f;
-            PlayerController.speed = speed;
-            //gameObject.GetComponent<GridController>().speed *= 2;
-
-        }
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:3bb1921e5949379766e3baf762eb0ab967f970ff891035d061a982e86f8ccbae
+size 1081

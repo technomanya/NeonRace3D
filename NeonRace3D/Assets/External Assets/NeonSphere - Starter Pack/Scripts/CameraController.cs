@@ -1,20 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class CameraController : MonoBehaviour
-{
-    [SerializeField] private GameObject player;
-    private Vector3 offset;
-
-    private void Start()
-    {
-        offset = transform.position - player.transform.position;
-    }
-
-    private void LateUpdate()
-    {
-        transform.LookAt(player.transform);
-        transform.position = player.transform.position + offset;
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d9ca3a163fee33d2effccc8a2efb965ae455ac62d7065ae86b0c160f5aee674f
+size 464

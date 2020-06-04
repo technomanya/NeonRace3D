@@ -1,17 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class FinishLine : MonoBehaviour
-{
-    public GameObject GM;
-
-    void Start()
-    {
-        GM = GameObject.FindGameObjectWithTag("GameController");
-    }
-    private void OnTriggerEnter(Collider other)
-    {
-        GM.GetComponent<GameManager>().GameOver(other.name);
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:86949af644815d4ff263d572639c3000e308759fcb413d42940cc9076c09c9c9
+size 369
