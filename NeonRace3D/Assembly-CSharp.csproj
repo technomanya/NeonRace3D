@@ -62,15 +62,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\External Assets\NeonSphere - Starter Pack\Scripts\CameraController.cs" />
-    <Compile Include="Assets\External Assets\NeonSphere - Starter Pack\Scripts\FinishLine.cs" />
-    <Compile Include="Assets\External Assets\NeonSphere - Starter Pack\Scripts\GameManager.cs" />
-    <Compile Include="Assets\External Assets\NeonSphere - Starter Pack\Scripts\PlayerController.cs" />
-    <Compile Include="Assets\External Assets\NeonSphere - Starter Pack\Scripts\PlayerImageController.cs" />
     <Compile Include="Assets\External Assets\Techno Blue UI\Demo_Assets\scripts\GUI_Demo.cs" />
+    <Compile Include="Assets\Scripts\CameraController.cs" />
     <Compile Include="Assets\Scripts\FakePlayerController.cs" />
+    <Compile Include="Assets\Scripts\FinishLine.cs" />
+    <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\GridController.cs" />
     <Compile Include="Assets\Scripts\ObjectPooler.cs" />
+    <Compile Include="Assets\Scripts\PlayerController.cs" />
+    <Compile Include="Assets\Scripts\PlayerImageController.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>D:/Mil_WorkSpace/NeonRace3D/NeonRace3D/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>
