@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -15,7 +16,14 @@ public class PlayerControllerWaypoint : MonoBehaviour
     public float PlayerSpeed;
     public float frequency = 1.0f;
     public float mouseX = 0.0f;
-    public Text speedText; 
+    public Text speedText;
+    public InputType InputT;
+
+    public enum InputType
+    {
+        Swipe,
+        Hold
+    }
 
     void Awake()
     {
@@ -41,7 +49,7 @@ public class PlayerControllerWaypoint : MonoBehaviour
         if (Vector3.Distance(_wayPoints[current].transform.position, transform.position) < 0.5 && Time.timeScale > 0)
         {
             //Debug.Log(_wayPoints[current].transform.position);
-            Debug.Log(current);
+            //Debug.Log(current);
             current++;
             if (current >= _wayPoints.Length)
             {
@@ -71,7 +79,15 @@ public class PlayerControllerWaypoint : MonoBehaviour
 
         if (Input.GetMouseButton(0))
         {
-            mouseX = Input.GetAxis("Mouse X");
+            if (InputT == InputType.Hold)
+            {
+                mouseX = mouseX - Screen.width;
+            }
+            else if(InputT == InputType.Swipe)
+            {
+                mouseX = Input.GetAxis("Mouse X");
+            }
+                
             _gridController.ContiniousSideTurn(mouseX);
         }
         else if(Input.GetMouseButtonUp(0) )

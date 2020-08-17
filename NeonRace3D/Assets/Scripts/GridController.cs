@@ -33,6 +33,7 @@ public class GridController : MonoBehaviour
         _canTurn = false;
         tronRunning = GetComponentInChildren<Animator>();
         player = GameObject.FindWithTag("Player");
+        //allSideRotAngle = Screen.width;
     }
 
     // Update is called once per frame

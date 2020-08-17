@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _positivePoint = 0;
     [SerializeField] private int _negativePoint = 0;
     [SerializeField] private int _gameSeconds = 0;
-    public int Coins = 0;
+    public int RealCoins = 0;
     [SerializeField] private PlayerControllerWaypoint playerControllerWP;
     private bool _isLevelBegin = false;
 
@@ -137,6 +137,7 @@ public class GameManager : MonoBehaviour
             finishLine.transform.rotation = gridList[gridList.Length - 1].transform.rotation;
         }
         //GameOverObj.gameObject.transform.parent.gameObject.SetActive(false);
+        GameAnalyticsSDK.GameAnalytics.Initialize();
 
     }
 
@@ -144,7 +145,6 @@ public class GameManager : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         playerControllerWP = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerControllerWaypoint>();
-        GameAnalyticsSDK.GameAnalytics.Initialize();
     }
 
     void Update()
@@ -179,13 +179,14 @@ public class GameManager : MonoBehaviour
         PointCalculator(PointSystem.Seconds, (int)Time.realtimeSinceStartup);
         var coin = Mathf.Clamp((int)((_positivePoint - _negativePoint) * 60 / _gameSeconds), 0, Mathf.Infinity);
         var score = coin * 7;
-        coin += Coins * 3;
+        if(RealCoins>0)
+            coin += RealCoins * 3;
 
         CoinText.text = coin.ToString();
         ScoreText.text = score.ToString();
 
         //CoinText.gameObject.transform.parent.gameObject.SetActive(true);
-
+        InGameImage.SetActive(false);
         GameOverObj.SetActive(true);
         Time.timeScale = 0;
         audioSource.Stop();

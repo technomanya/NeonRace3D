@@ -5,7 +5,11 @@ using UnityEngine;
 
 public class PlayerImageController : MonoBehaviour
 {
-    private float speed;
+    private float mainSpeed;
+    public float boostSpeed;
+    private int powerCounter = 0;
+    private float sprintBegin = 0;
+    private float slowBegin = 0;
     private ParticleSystem powerFX;
     private ParticleSystem obstacleFX;
     private GridController gridCon;
@@ -19,6 +23,7 @@ public class PlayerImageController : MonoBehaviour
     public float maxSpeed = 20.0f;
     public float minSpeed = 5.0f;
     public Camera MainCamera;
+    public GameObject[] SpeedBars;
 
     void Start()
     {
@@ -27,12 +32,12 @@ public class PlayerImageController : MonoBehaviour
         if (gameObject.GetComponentInParent<PlayerControllerWaypoint>())
         {
             PlayerControllerWP = GetComponentInParent<PlayerControllerWaypoint>();
-            speed = gameObject.GetComponentInParent<PlayerControllerWaypoint>().PlayerSpeed;
+            boostSpeed = maxSpeed;
         }
         else
         {
             PlayerController = GetComponentInParent<PlayerController>();
-            speed = PlayerController.speed;
+            boostSpeed = PlayerController.speed;
         }
 
         foreach (var effectFX in GetComponentsInChildren<ParticleSystem>())
@@ -50,30 +55,83 @@ public class PlayerImageController : MonoBehaviour
         gridCon = GetComponentInParent<GridController>();
 
         MainCamera = Camera.main;
+
+        mainSpeed = PlayerControllerWP.PlayerSpeed;
     }
 
     void Update()
     {
         endCounterSec += Time.deltaTime;
         int seconds = (int)endCounterSec % 60;
-        
+        switch (powerCounter)
+        {
+            case 1:
+                SpeedBars[0].SetActive(true);
+                break;
+            case 2:
+                SpeedBars[1].SetActive(true);
+                break;
+            case 3:
+                SpeedBars[2].SetActive(true);
+                break;
+            case 4:
+                SpeedBars[3].SetActive(true);
+                sprintBegin = Time.timeSinceLevelLoad;
+                powerCounter = 0;
+                break;
+            case 5:
+                sprintBegin = Time.timeSinceLevelLoad;
+                powerCounter = 0;
+                break;
+        }
+
+        if (sprintBegin > 0)
+        {
+            PlayerControllerWP.PlayerSpeed = boostSpeed;
+            if (Time.timeSinceLevelLoad - sprintBegin > 2.0f)
+            {
+                sprintBegin = 0;
+                powerCounter = 0;
+                foreach (var bar in SpeedBars)
+                {
+                    bar.SetActive(false);   
+                }
+                PlayerControllerWP.PlayerSpeed = mainSpeed;
+            }
+        }
+        else if(slowBegin > 0)
+        {
+            PlayerControllerWP.PlayerSpeed = minSpeed;
+            if (Time.timeSinceLevelLoad - slowBegin > 1.0f)
+            {
+                Debug.Log("Slow Correction");
+                slowBegin = 0;
+                PlayerControllerWP.PlayerSpeed = mainSpeed;
+            }
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.transform.parent.CompareTag("Obstacle"))
         {
-            Debug.Log("ObstacleHit");
-            if (speed >= minSpeed)
+            
+            if(sprintBegin == 0 && slowBegin == 0)
             {
-                speed -= speed * 0.3f;
-                PlayerControllerWP.PlayerSpeed = speed;
+                Debug.Log("ObstacleHit");
+                slowBegin = Time.timeSinceLevelLoad;
+                //PlayerControllerWP.PlayerSpeed = minSpeed;
+                //if (speed >= minSpeed)
+                //{
+                //    speed -= speed * 0.3f;
+                //    PlayerControllerWP.PlayerSpeed = minSpeed;
+                //}
+                //Destroy(other.gameObject);
+                other.gameObject.GetComponent<Renderer>().enabled = false;
+                obstacleFX.Play();
+                audios[0].Play();
+                gridCon.tronRunning.SetTrigger("Stumble");
             }
-            //Destroy(other.gameObject);
-            other.gameObject.GetComponent<Renderer>().enabled = false;
-            obstacleFX.Play();
-            audios[0].Play();
-            gridCon.tronRunning.SetTrigger("Stumble");
 
             GM.PointCalculator(GameManager.PointSystem.NegativePoint, 5);
             //gameObject.GetComponent<GridController>().speed -= gameObject.GetComponent<GridController>().speed * 0.2f;
@@ -81,23 +139,35 @@ public class PlayerImageController : MonoBehaviour
         else if (other.transform.parent.CompareTag("Power"))
         {
             Debug.Log("PowerHit");
-            if (speed <= maxSpeed)
+            if(sprintBegin == 0 && slowBegin == 0)
             {
-                speed += speed;
-                PlayerControllerWP.PlayerSpeed = speed;
+                if (powerCounter < 4)
+                {
+                    powerCounter++;
+                }
+                else
+                {
+                    powerCounter = 0;
+                }
+
+                //if (speed <= maxSpeed)
+                //{
+                //    speed += speed;
+                //    PlayerControllerWP.PlayerSpeed = speed;
+                //}
+                //Destroy(other.gameObject);
+                other.gameObject.GetComponent<Renderer>().enabled = false;
+                powerFX.Play();
+                audios[1].Play();
+                gridCon.tronRunning.SetTrigger("Sprint");
             }
-            //Destroy(other.gameObject);
-            other.gameObject.GetComponent<Renderer>().enabled = false;
-            powerFX.Play();
-            audios[1].Play();
-            gridCon.tronRunning.SetTrigger("Sprint");
 
             GM.PointCalculator(GameManager.PointSystem.PositivePoint, 10);
             //gameObject.GetComponent<GridController>().speed *= 2;
         }
         else if (other.transform.CompareTag("CoinObj"))
         {
-            GM.Coins++;
+            GM.RealCoins++;
             other.GetComponent<Renderer>().enabled = false;
         }
     }

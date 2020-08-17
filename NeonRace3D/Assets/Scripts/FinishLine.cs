@@ -12,6 +12,7 @@ public class FinishLine : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        GM.GetComponent<GameManager>().GameOver(other.name);
+        Debug.Log(other.name);
+        GM.GetComponent<GameManager>().GameOver(other.tag);
     }
 }
