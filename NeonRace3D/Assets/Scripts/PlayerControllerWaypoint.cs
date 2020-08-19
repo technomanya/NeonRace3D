@@ -100,4 +100,13 @@ public class PlayerControllerWaypoint : MonoBehaviour
         }
 
     }
+
+    public void InputChange()
+    {
+        if (InputT == InputType.Hold)
+            InputT = InputType.Swipe;
+        else if (InputT == InputType.Swipe)
+            InputT = InputType.Hold;
+
+    }
 }

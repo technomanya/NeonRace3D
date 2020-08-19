@@ -19,7 +19,7 @@ public class SimpleScaler : MonoBehaviour
         
         if (gameObject.transform.localScale.x >= mainScale.x * scaleAmount)
             StartCoroutine(DelayedReturn());
-        else if (gameObject.transform.localScale.x <= mainScale.x)
+        else
         {
             gameObject.transform.localScale = Vector3.Slerp(gameObject.transform.localScale, mainScale * this.scaleAmount, Time.deltaTime);
         }

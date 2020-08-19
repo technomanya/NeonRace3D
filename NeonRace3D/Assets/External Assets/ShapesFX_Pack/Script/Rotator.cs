@@ -16,5 +16,6 @@ public class Rotator : MonoBehaviour
     void Update()
     {
         transform.Rotate(direction * speed *Time.deltaTime);
+        transform.localPosition = transform.position + new Vector3(0, 2.4f, 0.2f);
     }
 }

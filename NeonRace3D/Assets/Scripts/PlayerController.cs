@@ -75,7 +75,7 @@ public class PlayerController : MonoBehaviour
     {
         if (other.transform.CompareTag("EndTip"))
         {
-            Debug.Log(other.transform.parent.name);
+            //Debug.Log(other.transform.parent.name);
             GridControl.ChangeBaseGrid(other.transform.parent.gameObject);
         }
         if (other.transform.CompareTag("StartTip"))

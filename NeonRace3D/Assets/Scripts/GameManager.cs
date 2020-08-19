@@ -33,10 +33,15 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _negativePoint = 0;
     [SerializeField] private int _gameSeconds = 0;
     public int RealCoins = 0;
-    [SerializeField] private PlayerControllerWaypoint playerControllerWP;
+    public int CoinGeneral;
+    public PlayerControllerWaypoint playerControllerWP;
+    public FakePlayerController rivalController;
     private bool _isLevelBegin = false;
+    private float tempSpeedPlayer;
+    private float tempSpeedRival;
 
-    
+
+
 
     public enum  SceneIndexConstant
     {
@@ -57,6 +62,14 @@ public class GameManager : MonoBehaviour
     {
         //CoinText.gameObject.transform.parent.gameObject.SetActive(false);
         Time.timeScale = 0;
+        if (PlayerPrefs.HasKey("Coin"))
+        {
+            CoinGeneral = PlayerPrefs.GetInt("Coin");
+        }
+        else
+        {
+            PlayerPrefs.SetInt("Coin", 0);
+        }
 
         if (SceneManager.GetActiveScene().name == "GameScene")
         {
@@ -145,6 +158,7 @@ public class GameManager : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         playerControllerWP = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerControllerWaypoint>();
+        rivalController = GameObject.FindGameObjectWithTag("Enemy").GetComponent<FakePlayerController>();
     }
 
     void Update()
@@ -166,7 +180,10 @@ public class GameManager : MonoBehaviour
 
     public void GameOver(string playerName)
     {
-        if(playerName == "Player")
+        //Time.timeScale = 0;
+        playerControllerWP.PlayerSpeed = 0;
+        rivalController.speed = 0;
+        if (playerName == "Player")
         {
             youLose.gameObject.SetActive(false);
             youWin.gameObject.SetActive(true);
@@ -176,19 +193,20 @@ public class GameManager : MonoBehaviour
             youWin.gameObject.SetActive(false);
             youLose.gameObject.SetActive(true);
         }
-        PointCalculator(PointSystem.Seconds, (int)Time.realtimeSinceStartup);
-        var coin = Mathf.Clamp((int)((_positivePoint - _negativePoint) * 60 / _gameSeconds), 0, Mathf.Infinity);
+        PointAddByType(PointSystem.Seconds, (int)Time.realtimeSinceStartup);
+        var coin = Mathf.Clamp((int)(_positivePoint - _negativePoint), 0, Mathf.Infinity);
         var score = coin * 7;
         if(RealCoins>0)
             coin += RealCoins * 3;
 
-        CoinText.text = coin.ToString();
+        CoinGeneral = PlayerPrefs.GetInt("Coin") +(int)coin;
+        CoinText.text = CoinGeneral.ToString();
         ScoreText.text = score.ToString();
-
+        PlayerPrefs.SetInt("Coin",CoinGeneral);
         //CoinText.gameObject.transform.parent.gameObject.SetActive(true);
         InGameImage.SetActive(false);
         GameOverObj.SetActive(true);
-        Time.timeScale = 0;
+        
         audioSource.Stop();
     }
 
@@ -205,26 +223,33 @@ public class GameManager : MonoBehaviour
     public void Begin()
     {
         Time.timeScale = 1;
-        //PointCalculator(PointSystem.Seconds, (int)Time.realtimeSinceStartup);
+        //PointAddByType(PointSystem.Seconds, (int)Time.realtimeSinceStartup);
         Gcontroller._canTurn = true;
         audioSource.Play();
         _isLevelBegin = true;
         InGameImage.SetActive(true);
+        tempSpeedPlayer = playerControllerWP.PlayerSpeed;
+        tempSpeedRival = rivalController.speed;
     }
 
     public void PauseContinue(bool state)
     {
+        
         if (state)
         {
-            Time.timeScale = 0;
+            //Time.timeScale = 0;
+            playerControllerWP.PlayerSpeed = 0;
+            rivalController.speed = 0;
         }
         else
         {
-            Time.timeScale = 1;
+            //  Time.timeScale = 1;
+            playerControllerWP.PlayerSpeed = tempSpeedPlayer;
+            rivalController.speed = tempSpeedRival;
         }
     }
 
-    public void PointCalculator(PointSystem type, int points)
+    public void PointAddByType(PointSystem type, int points)
     {
         switch (type)
         {

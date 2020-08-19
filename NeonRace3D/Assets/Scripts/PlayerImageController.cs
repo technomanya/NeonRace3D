@@ -24,9 +24,12 @@ public class PlayerImageController : MonoBehaviour
     public float minSpeed = 5.0f;
     public Camera MainCamera;
     public GameObject[] SpeedBars;
+    public GameObject JetObj;
 
     void Start()
     {
+        JetObj = GameObject.FindGameObjectWithTag("Jet");
+        JetObj.SetActive(false);
         PlayerController = GetComponentInParent<PlayerController>();
         GM = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
         if (gameObject.GetComponentInParent<PlayerControllerWaypoint>())
@@ -47,7 +50,7 @@ public class PlayerImageController : MonoBehaviour
             else if (effectFX.CompareTag("ObstacleFX"))
                 obstacleFX = effectFX;
             else
-                Debug.LogError("There is no power or obstacle effects !");
+                Debug.Log("There is no power or obstacle effects !");
         }
 
         audios = GetComponents<AudioSource>();
@@ -87,6 +90,8 @@ public class PlayerImageController : MonoBehaviour
 
         if (sprintBegin > 0)
         {
+            JetObj.SetActive(true);
+            gameObject.transform.localEulerAngles = new Vector3(60, 0, 0);
             PlayerControllerWP.PlayerSpeed = boostSpeed;
             if (Time.timeSinceLevelLoad - sprintBegin > 2.0f)
             {
@@ -94,6 +99,8 @@ public class PlayerImageController : MonoBehaviour
                 powerCounter = 0;
                 foreach (var bar in SpeedBars)
                 {
+                    JetObj.SetActive(false);
+                    gameObject.transform.localEulerAngles = Vector3.zero;
                     bar.SetActive(false);   
                 }
                 PlayerControllerWP.PlayerSpeed = mainSpeed;
@@ -104,7 +111,7 @@ public class PlayerImageController : MonoBehaviour
             PlayerControllerWP.PlayerSpeed = minSpeed;
             if (Time.timeSinceLevelLoad - slowBegin > 1.0f)
             {
-                Debug.Log("Slow Correction");
+                //Debug.Log("Slow Correction");
                 slowBegin = 0;
                 PlayerControllerWP.PlayerSpeed = mainSpeed;
             }
@@ -118,7 +125,7 @@ public class PlayerImageController : MonoBehaviour
             
             if(sprintBegin == 0 && slowBegin == 0)
             {
-                Debug.Log("ObstacleHit");
+                //Debug.Log("ObstacleHit");
                 slowBegin = Time.timeSinceLevelLoad;
                 //PlayerControllerWP.PlayerSpeed = minSpeed;
                 //if (speed >= minSpeed)
@@ -133,13 +140,13 @@ public class PlayerImageController : MonoBehaviour
                 gridCon.tronRunning.SetTrigger("Stumble");
             }
 
-            GM.PointCalculator(GameManager.PointSystem.NegativePoint, 5);
+            GM.PointAddByType(GameManager.PointSystem.NegativePoint, 5);
             //gameObject.GetComponent<GridController>().speed -= gameObject.GetComponent<GridController>().speed * 0.2f;
         }
         else if (other.transform.parent.CompareTag("Power"))
         {
-            Debug.Log("PowerHit");
-            if(sprintBegin == 0 && slowBegin == 0)
+            //Debug.Log("PowerHit");
+            if(sprintBegin == 0 )
             {
                 if (powerCounter < 4)
                 {
@@ -162,7 +169,7 @@ public class PlayerImageController : MonoBehaviour
                 gridCon.tronRunning.SetTrigger("Sprint");
             }
 
-            GM.PointCalculator(GameManager.PointSystem.PositivePoint, 10);
+            GM.PointAddByType(GameManager.PointSystem.PositivePoint, 10);
             //gameObject.GetComponent<GridController>().speed *= 2;
         }
         else if (other.transform.CompareTag("CoinObj"))
