@@ -91,6 +91,7 @@ public class PlayerImageController : MonoBehaviour
         if (sprintBegin > 0)
         {
             JetObj.SetActive(true);
+            gameObject.transform.localPosition = new Vector3(0,2.0f,0);
             gameObject.transform.localEulerAngles = new Vector3(60, 0, 0);
             PlayerControllerWP.PlayerSpeed = boostSpeed;
             if (Time.timeSinceLevelLoad - sprintBegin > 2.0f)
@@ -100,6 +101,7 @@ public class PlayerImageController : MonoBehaviour
                 foreach (var bar in SpeedBars)
                 {
                     JetObj.SetActive(false);
+                    gameObject.transform.localPosition = new Vector3(0, 1.5f, 0);
                     gameObject.transform.localEulerAngles = Vector3.zero;
                     bar.SetActive(false);   
                 }
