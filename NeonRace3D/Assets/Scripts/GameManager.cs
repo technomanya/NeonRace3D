@@ -40,8 +40,28 @@ public class GameManager : MonoBehaviour
     private float tempSpeedPlayer;
     private float tempSpeedRival;
 
+    [Header("LevelSystem")]
+    public int CurrentLvlId;
+    public int LevelCount;
+    public GameObject LevelRoad;
+    public Level[] Levels;
 
 
+
+
+    public class Level
+    {
+        private string _levelName { get;}
+        private int _levelId { get; }
+        private GameObject _levelRoad;
+
+        public Level(string name, int id, GameObject road)
+        {
+            _levelName = name;
+            _levelId = id;
+            _levelRoad = road;
+        }
+    }
 
     public enum  SceneIndexConstant
     {
